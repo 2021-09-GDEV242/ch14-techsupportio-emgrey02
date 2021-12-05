@@ -124,10 +124,35 @@ public class Responder
         Charset charset = Charset.forName("US-ASCII");
         Path path = Paths.get(FILE_OF_DEFAULT_RESPONSES);
         try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
+            String fullResponse = "";
             String response = reader.readLine();
+            String nextLine = reader.readLine();
             while(response != null) {
-                defaultResponses.add(response);
-                response = reader.readLine();
+                if (nextLine == null) {
+                    break;
+                }
+                if (response.length() != 0 && nextLine.length() == 0) {
+                    fullResponse += response;
+                    defaultResponses.add(fullResponse);
+                    response = reader.readLine();
+                    nextLine = reader.readLine();
+                    fullResponse = "";
+                } else if (response.length() == 0 && nextLine.length() != 0) {
+                    if (fullResponse.length() != 0) {
+                        defaultResponses.add(fullResponse);
+                        fullResponse = "";
+                    }
+                    fullResponse += nextLine;
+                    response = reader.readLine();
+                    nextLine = reader.readLine();
+                } else if (response.length() != 0 && nextLine.length() != 0) {
+                    fullResponse += response + nextLine;
+                    response = reader.readLine();
+                    nextLine = reader.readLine();
+                } else {
+                    response = reader.readLine();
+                    nextLine = reader.readLine();
+                }
             }
         }
         catch(FileNotFoundException e) {
@@ -137,6 +162,7 @@ public class Responder
             System.err.println("A problem was encountered reading " +
                                FILE_OF_DEFAULT_RESPONSES);
         }
+        System.out.println(defaultResponses);
         // Make sure we have at least one response.
         if(defaultResponses.size() == 0) {
             defaultResponses.add("Could you elaborate on that?");
