@@ -134,8 +134,6 @@ public class Responder
                 if (response.length() != 0 && nextLine.length() == 0) {
                     fullResponse += response;
                     defaultResponses.add(fullResponse);
-                    response = reader.readLine();
-                    nextLine = reader.readLine();
                     fullResponse = "";
                 } else if (response.length() == 0 && nextLine.length() != 0) {
                     if (fullResponse.length() != 0) {
@@ -143,16 +141,11 @@ public class Responder
                         fullResponse = "";
                     }
                     fullResponse += nextLine;
-                    response = reader.readLine();
-                    nextLine = reader.readLine();
                 } else if (response.length() != 0 && nextLine.length() != 0) {
                     fullResponse += response + nextLine;
-                    response = reader.readLine();
-                    nextLine = reader.readLine();
-                } else {
-                    response = reader.readLine();
-                    nextLine = reader.readLine();
-                }
+                } 
+                response = reader.readLine();
+                nextLine = reader.readLine();
             }
         }
         catch(FileNotFoundException e) {
